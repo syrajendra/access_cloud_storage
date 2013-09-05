@@ -5,6 +5,10 @@ $(function() {
 	$('a[href]').click(function(event) {
 		list_contents(this.name);
 	});
+	
+	$(".icon-minus, .icon-plus").on('click', function() {
+	    $(this).toggleClass("icon-minus icon-plus");
+	});
 });
 
 function list_contents(cloud_name) {
@@ -39,16 +43,16 @@ function handle_google_drive_auth_result(resp) {
 function authorize_google_drive(immediate) {
 	var user_id = '';
 	gapi.auth.authorize({
-							  	client_id: '175339823669-kj2bv8dljiestf0nvp4dfm2f77855ldb.apps.googleusercontent.com',
-							  	scope: [
-										  	'https://www.googleapis.com/auth/drive.install',
-										  	'https://www.googleapis.com/auth/drive.file',
-										  	'openid'
-							  			],
-							  	user_id: user_id,
-							  	immediate: immediate
-							}, 
-							handle_google_drive_auth_result);
+		  	client_id: '175339823669-kj2bv8dljiestf0nvp4dfm2f77855ldb.apps.googleusercontent.com',
+		  	scope: [
+					  	'https://www.googleapis.com/auth/drive.install',
+					  	'https://www.googleapis.com/auth/drive',
+					  	'openid'
+		  			],
+		  	user_id: user_id,
+		  	immediate: immediate
+		}, 
+	handle_google_drive_auth_result);
 }
 
 function load_google_drive() {	
@@ -57,26 +61,41 @@ function load_google_drive() {
 	});
 }
 
-function handle_google_drive_file_list(files) {
-	for (var i=0;i<files.length;i++) {
-		console.log(files[i].title);
-	}	
+function handle_google_drive_file_list(list) {
+	var folder_div = document.getElementById('folder_list');	
+	
+	for (var i=0;i<list.length;i++) {
+		console.log(list[i].title);
+		console.log(list[i].mimeType);
+		console.log(list[i].id);
+		folder_div.insertAdjacentHTML('beforeend', '<i class="icon-plus" data-toggle="collapse" data-target="' + list[i].title +'"></i>')
+		var elem = document.createElement('input');
+		elem.setAttribute('type', 'button');
+    	elem.setAttribute('value', list[i].title);
+    	elem.setAttribute('name', list[i].title);
+    	elem.setAttribute('class', 'btn btn-mini');
+		folder_div.appendChild(elem);
+		folder_div.insertAdjacentHTML('beforeend', '<div id="' + list[i].title + '" class="collapse"> ' + "File list..." + '</div>')
+	}		
 }
 
 function list_google_drive_contents() {
 	gapi.client.load('drive', 'v2', function() {
-		function read_files(next_page, page_token, files) {				
+		function read_files(next_page, page_token, list) {				
 			var request = gapi.client.drive.files.list(page_token);
-			request.execute(function(resp) {
-				if(resp.items)					
-					files 	= files.concat(resp.items);				
+			console.log(page_token);
+			request.execute(function(resp) {				
+				if(resp.items) {
+					list 	= list.concat(resp.items);				
+				}
 				if(resp.nextPageToken) {
-					read_files(resp.nextPageToken, {'pageToken': resp.nextPageToken}, files);
+					read_files(resp.nextPageToken, {'pageToken': resp.nextPageToken}, list);
 				} else {
-					handle_google_drive_file_list(files);
+					handle_google_drive_file_list(list);
 				}				
 			});
 		}
-		read_files(null, null, []);
+		var query = "'root' in parents";
+		read_files(null, {'q' : query}, []);
 	});
 }

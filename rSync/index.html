@@ -1,5 +1,5 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
-<html lang="en">
+<html lang="en" ng-app='rSyncApp'>
 	<head>
 		<title>rSync</title>
 	  	<meta   http-equiv="X-UA-Compatible" content="IE=9">
@@ -12,10 +12,9 @@
 		<link   rel="stylesheet" type="text/css" href="//netdna.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap.min.css">		
 		<link   rel="stylesheet" type="text/css" href="//netdna.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap-theme.min.css">		
 	  	-->
-	  	<link   rel="stylesheet" type="text/css" href="bootstrap/css/bootstrap.min.css">		
-		<link   rel="stylesheet" type="text/css" href="bootstrap/css/bootstrap-theme.min.css">		
+	  	<link   rel="stylesheet" type="text/css" href="/bootstrap/css/bootstrap.min.css">				
 	  	<script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>	  	
-	  	<script type="text/javascript" src="bootstrap/js/bootstrap.min.js"></script>
+	  	<script type="text/javascript" src="/bootstrap/js/bootstrap.min.js"></script>
 	  	<!-- Bootstrap CDN not working
 	  	<script type="text/javascript" src="//netdna.bootstrapcdn.com/bootstrap/3.0.0/js/bootstrap.min.js"></script>	  	
 	  	<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.10.3/jquery-ui.min.js"></script>	  	
@@ -23,9 +22,9 @@
 	  	<script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/webfont/1.4.10/webfont.js"></script>
 	  	-->
 	  	<script type="text/javascript" src="https://apis.google.com/js/api.js"></script>	  	
-	  	<script type="text/javascript" src="google_drive.js"></script>	  	
+	  	<script type="text/javascript" src="/rSync/js/google_drive.js"></script>	  	
 	</head>
-	<body>	
+	<body ng-controller='rSyncController'>	
 		<div class="container-fluid">
   			<div class="row-fluid">
   				<div class="span12">
@@ -44,20 +43,22 @@
   							<ul class="nav nav-list">
   								<li class="nav-header">Supported Cloud Storages</li>
   								<li class="divider"></li>
-  								<li class="active"><a href="#">Google Drive</a></li>
+  								<li><a name="googledrive" href="#">Google Drive</a></li>
   								<li class="divider"></li>
-  								<li><a href="#">DropBox</a></li>
+  								<li><a name="dropbox" href="#">DropBox</a></li>
   								<li class="divider"></li>
-  								<li><a href="#">Copy</a></li>
+  								<li><a name="copy" href="#">Copy</a></li>
   								<li class="divider"></li>
-  								<li><a href="#">iCloud</a></li>
+  								<li><a name="icloud" href="#">iCloud</a></li>
   								<li class="divider"></li>
   							</ul>
   						</div>
   						<div class="span10">  							
   							<ul class="nav nav-list">
   								<li class="nav-header">List Contents</li>
-  								<li class="divider"></li>
+  								<li class="divider"></li>  								
+  								<div id="folder_list" class="btn-group" data-toggle="buttons-radio">  									
+							    </div>  								
   							</ul>
 	  					</div>
 	  				</div>
