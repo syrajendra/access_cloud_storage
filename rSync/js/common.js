@@ -44,6 +44,10 @@ function list_contents(cloud_name) {
 	}
 }
 
+function get_collapse_unique_target_id(cloud_name, folder_name, count) {
+	return 'target_' + cloud_name + '_' + folder_name + "_" + count;
+}
+
 function create_navigation_list(cloud_name, username, parent) {	
 	create_div('nav_' + cloud_name, 'span5', '', '', parent);
 	var nav_parent = document.getElementById('nav_' + cloud_name);
@@ -114,4 +118,9 @@ function create_div(id, classname, text, style, parent) {
 function create_icon(id, target, parent) {
 	var html_icon = '<i style="margin-top:0.1cm;" class="icon-plus" data-toggle="collapse" data-target="#' + target  + '" id="img_' + id + '"></i>';
 	parent.insertAdjacentHTML('beforeend', html_icon);
+}
+
+function create_text(text, parent) {
+	var el = document.createTextNode(text);
+  	parent.appendChild(el);
 }

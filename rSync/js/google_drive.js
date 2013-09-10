@@ -1,6 +1,8 @@
 "use strict";
 
 var g_cloud_name = '';
+var gdrive_count = 0;
+
 function toggle_init () {
 	$(".icon-minus, .icon-plus").on('click', function(event) {
 	    $(this).toggleClass("icon-minus icon-plus");	     
@@ -26,6 +28,7 @@ function handle_google_drive_auth_result(resp) {
  		authorize_google_drive(false);
  	}
  	var folder_div = document.getElementById('folder_' + g_cloud_name);
+ 	//console.log(folder_div);
  	list_google_drive_contents('root', folder_div);
  	toggle_init();
 }
@@ -53,29 +56,29 @@ function load_google_drive(cloud_name, parent) {
 	});
 }
 
-var gdrive_count = 0;
-function get_collapse_unique_target_id(folder_name) {
-	gdrive_count++;
-	var target_id = 'target_' + folder_name + "_" + gdrive_count;
-	return target_id;
-}
 
-function handle_google_drive_file_list(list, parent) {		
-	for (var i=0;i<list.length;i++) {
-		console.log(list[i].title);
-		console.log(list[i].mimeType);
-		console.log(list[i].id);
-		if("Google Buzz" == list[i].title)	continue;
-		if("application/vnd.google-apps.folder" == list[i].mimeType) {			
-			var target_id = get_collapse_unique_target_id(list[i].title);
-			create_icon(list[i].title, target_id, parent);
-			create_radio_button(list[i].title, 'radio_btn', 'margin-left:0.1cm;', parent);			
-			create_div(target_id, "collapse", "", 'margin-left:1cm;', parent);
-			var parent_id = document.getElementById(target_id);
-			list_google_drive_contents(list[i].id, parent_id);
-		} else {
-			create_radio_button(list[i].title, 'radio_btn', 'margin-left:0.5cm;', parent);
+
+function handle_google_drive_file_list(list, parent) {
+	if(list.length) {		
+		for (var i=0;i<list.length;i++) {
+			console.log(list[i].title);
+			console.log(list[i].mimeType);
+			console.log(list[i].id);
+			if("Google Buzz" == list[i].title)	continue;
+			if("application/vnd.google-apps.folder" == list[i].mimeType) {
+				gdrive_count++;			
+				var target_id = get_collapse_unique_target_id(g_cloud_name, list[i].title, gdrive_count);
+				create_icon(list[i].title, target_id, parent);
+				create_radio_button(list[i].title, 'radio_btn', 'margin-left:0.1cm;', parent);			
+				create_div(target_id, "collapse", "", 'margin-left:1cm;', parent);
+				var parent_id = document.getElementById(target_id);
+				list_google_drive_contents(list[i].id, parent_id);
+			} else {
+				create_radio_button(list[i].title, 'radio_btn', 'margin-left:0.5cm;', parent);
+			}
 		}
+	} else {
+		create_text('Empty folder !!!', parent);
 	}		
 }
 
