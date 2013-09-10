@@ -135,11 +135,11 @@ function quota_string(size) {
 	if(size < 1024) { 
 		return size + " Bytes";
 	} else if(size < (1024 * 1024)) {
-		return Math.round(size/(1024)) + " Bytes";
+		return (size/(1024)).toFixed(2) + " Bytes";
 	} else if(size < (1024 * 1024 * 1024)) {
-		return Math.round(size/(1024 * 1024)) + " MB";
+		return (size/(1024 * 1024)).toFixed(2) + " MB";
 	} else if(size < (1024 * 1024 * 1024 * 1024)) {
-		return Math.round(size/(1024 * 1024 * 1024)) + " GB";
+		return (size/(1024 * 1024 * 1024)).toFixed(2) + " GB";
 	} else {
 		"unknown";
 	}
