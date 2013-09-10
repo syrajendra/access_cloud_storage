@@ -26,6 +26,17 @@ function list_contents_dummy() {
 }
 
 function list_contents(cloud_name) {
+	var popup = window.open("about:blank", "dummy_window", "height=50, width=50", true);
+	alert(popup);
+	setTimeout(function() {
+    	if(!popup || popup.outerHeight === 0) {
+    		alert("Popup Blocker is enabled! Please unblock Popup for this site");
+    		return;
+        } else {
+        	popup.close()        	
+        }
+    }, 5);
+
 	switch(cloud_name) {
 		case "googledrive": 
 					load_google_drive();
@@ -125,12 +136,13 @@ function handle_google_drive_file_list(list, parent) {
 	for (var i=0;i<list.length;i++) {
 		console.log(list[i].title);
 		console.log(list[i].mimeType);
-		console.log(list[i].id);		
+		console.log(list[i].id);
+		if("Google Buzz" == list[i].title)	continue;
 		if("application/vnd.google-apps.folder" == list[i].mimeType) {			
 			var target_id = get_collapse_unique_target_id(list[i].title);
 			create_icon(list[i].title, target_id, parent);
 			create_radio_button(list[i].title, 'radio_btn', 'margin-left:0.1cm;', parent);			
-			create_div(target_id, "collapse", "", 'margin-left:1.4cm;', parent);
+			create_div(target_id, "collapse", "", 'margin-left:1cm;', parent);
 			var parent_id = document.getElementById(target_id);
 			list_google_drive_contents(list[i].id, parent_id);
 		} else {
