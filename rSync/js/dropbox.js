@@ -50,6 +50,8 @@ function list_dropbox_contents(folder, client, parent) {
 	});
 }
 
+
+
 function load_dropbox(cloud_name, parent) {
 	g_cloud_name = cloud_name;
 	//Dropbox.AuthDriver.Popup.oauthReceiver();
@@ -67,7 +69,8 @@ function load_dropbox(cloud_name, parent) {
     				console.error('Error: Failed to get account info : ' + error);
     				return;
   				} 
-  				create_navigation_list(cloud_name, accountInfo.name, parent);
+  				var quota_heading = prepare_quota_heading(accountInfo.name, accountInfo.usedQuota, accountInfo.quota);
+  				create_navigation_list(cloud_name, quota_heading, parent);
   				var folder_div = document.getElementById('folder_' + cloud_name);
   				list_dropbox_contents("/", client, folder_div);					
 			});

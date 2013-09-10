@@ -2,6 +2,7 @@
 
 var g_cloud_name = '';
 var gdrive_count = 0;
+var g_parent = '';
 
 function toggle_init () {
 	$(".icon-minus, .icon-plus").on('click', function(event) {
@@ -20,6 +21,15 @@ function toggle_init () {
 //	handle_google_drive_file_list(list);
 //}
 
+function handle_quota_result(resp) {
+	var quota_heading = prepare_quota_heading(resp.name, resp.quotaBytesUsed, resp.quotaBytesTotal);
+	create_navigation_list(g_cloud_name, quota_heading, g_parent);
+ 	var folder_div = document.getElementById('folder_' + g_cloud_name);
+ 	//console.log(folder_div);
+ 	list_google_drive_contents('root', folder_div);
+ 	toggle_init();
+}
+
 function handle_google_drive_auth_result(resp) {
 	if (resp && !resp.error) { 			 		
  		console.log("rSync: Authorization complete !!!")
@@ -27,10 +37,11 @@ function handle_google_drive_auth_result(resp) {
  		console.log("rSync: Calling authorization popup !!!")
  		authorize_google_drive(false);
  	}
- 	var folder_div = document.getElementById('folder_' + g_cloud_name);
- 	//console.log(folder_div);
- 	list_google_drive_contents('root', folder_div);
- 	toggle_init();
+
+ 	gapi.client.load('drive', 'v2', function() {
+	 	var request = gapi.client.drive.about.get();
+	  		request.execute(handle_quota_result);
+  	});
 }
 
 function authorize_google_drive(immediate) {
@@ -50,20 +61,18 @@ function authorize_google_drive(immediate) {
 
 function load_google_drive(cloud_name, parent) {
 	g_cloud_name = cloud_name;
-	create_navigation_list(cloud_name, '', parent);
+	g_parent = parent;	
 	gapi.load('auth:client,drive-realtime,drive-share', function() {
 		authorize_google_drive(true); // without pop up
 	});
 }
 
-
-
 function handle_google_drive_file_list(list, parent) {
 	if(list.length) {		
 		for (var i=0;i<list.length;i++) {
 			console.log(list[i].title);
-			console.log(list[i].mimeType);
-			console.log(list[i].id);
+			//console.log(list[i].mimeType);
+			//console.log(list[i].id);
 			if("Google Buzz" == list[i].title)	continue;
 			if("application/vnd.google-apps.folder" == list[i].mimeType) {
 				gdrive_count++;			
@@ -84,7 +93,7 @@ function handle_google_drive_file_list(list, parent) {
 
 function list_google_drive_contents(id, parent) {
 	gapi.client.load('drive', 'v2', function() {
-		function read_files(next_page, page_token, list) {				
+		function read_files(page_token, list) {				
 			var request = gapi.client.drive.files.list(page_token);
 			console.log(page_token);
 			request.execute(function(resp) {				
@@ -92,13 +101,14 @@ function list_google_drive_contents(id, parent) {
 					list 	= list.concat(resp.items);				
 				}
 				if(resp.nextPageToken) {
-					read_files(resp.nextPageToken, {'pageToken': resp.nextPageToken}, list);
+					page_token.pageToken = resp.nextPageToken; 
+					read_files(page_token, list);
 				} else {
 					handle_google_drive_file_list(list, parent);
 				}				
 			});
 		}
 		var query = "'" + id + "' in parents";
-		read_files(null, {'q' : query}, []);
+		read_files({'q' : query, 'orderBy' : 'title'}, []);
 	});
 }

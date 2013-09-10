@@ -10,6 +10,7 @@ $(function() {
 var g_cloud_count = 0;
 
 function list_contents(cloud_name) {
+	/*
 	var popup = window.open("about:blank", "dummy_window", "height=50, width=50", true);	
 	setTimeout(function() {
     	if(!popup || popup.outerHeight === 0) {
@@ -19,8 +20,8 @@ function list_contents(cloud_name) {
         	popup.close()        	
         }
     }, 5);
+	*/
     if(g_cloud_count < 2) {
-    	g_cloud_count++;
 	    var parent = document.getElementById('div_cloud_display');		        
 		switch(cloud_name) {
 			case "googledrive":					
@@ -48,7 +49,12 @@ function get_collapse_unique_target_id(cloud_name, folder_name, count) {
 	return 'target_' + cloud_name + '_' + folder_name + "_" + count;
 }
 
-function create_navigation_list(cloud_name, username, parent) {	
+function create_navigation_list(cloud_name, username, parent) {
+	if(document.getElementById('nav_' + cloud_name)) {
+		alert("Error: " + cloud_name.toUpperCase() + " already exist !!!");
+		return;
+	}
+	g_cloud_count++;	
 	create_div('nav_' + cloud_name, 'span5', '', '', parent);
 	var nav_parent = document.getElementById('nav_' + cloud_name);
 	create_unordered_list('ul_' + cloud_name, 'nav nav-list', nav_parent);
@@ -123,4 +129,22 @@ function create_icon(id, target, parent) {
 function create_text(text, parent) {
 	var el = document.createTextNode(text);
   	parent.appendChild(el);
+}
+
+function quota_string(size) {
+	if(size < 1024) { 
+		return size + " Bytes";
+	} else if(size < (1024 * 1024)) {
+		return Math.round(size/(1024)) + " Bytes";
+	} else if(size < (1024 * 1024 * 1024)) {
+		return Math.round(size/(1024 * 1024)) + " MB";
+	} else if(size < (1024 * 1024 * 1024 * 1024)) {
+		return Math.round(size/(1024 * 1024 * 1024)) + " GB";
+	} else {
+		"unknown";
+	}
+}
+
+function prepare_quota_heading(user_name, used_quota, quota) {
+	return user_name + " - " + quota_string(used_quota) + " of " + quota_string(quota) + " used";
 }
