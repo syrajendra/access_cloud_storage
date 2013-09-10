@@ -45,8 +45,9 @@ function authorize_google_drive(immediate) {
 	handle_google_drive_auth_result);
 }
 
-function load_google_drive(cloud_name) {
+function load_google_drive(cloud_name, parent) {
 	g_cloud_name = cloud_name;
+	create_navigation_list(cloud_name, '', parent);
 	gapi.load('auth:client,drive-realtime,drive-share', function() {
 		authorize_google_drive(true); // without pop up
 	});

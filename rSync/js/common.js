@@ -21,14 +21,13 @@ function list_contents(cloud_name) {
     }, 5);
     if(g_cloud_count < 2) {
     	g_cloud_count++;
-	    var parent = document.getElementById('div_cloud_display');	
-	    create_navigation_list(cloud_name, parent);    
+	    var parent = document.getElementById('div_cloud_display');		        
 		switch(cloud_name) {
 			case "googledrive":					
-						load_google_drive(cloud_name);
+						load_google_drive(cloud_name, parent);
 						break;
 			case "dropbox":					
-						load_dropbox(cloud_name);
+						load_dropbox(cloud_name, parent);
 						break;
 			case "copy": 
 						alert("Still not implemented");
@@ -45,12 +44,14 @@ function list_contents(cloud_name) {
 	}
 }
 
-function create_navigation_list(cloud_name, parent) {	
+function create_navigation_list(cloud_name, username, parent) {	
 	create_div('nav_' + cloud_name, 'span5', '', '', parent);
 	var nav_parent = document.getElementById('nav_' + cloud_name);
 	create_unordered_list('ul_' + cloud_name, 'nav nav-list', nav_parent);
-	var ul_parent = document.getElementById('ul_' + cloud_name);	
-	create_list('', 'nav-header', cloud_name, ul_parent);
+	var ul_parent = document.getElementById('ul_' + cloud_name);
+	var header = cloud_name;
+	if(username) header = header + " ("+ username + ")";
+	create_list('', 'nav-header', header, ul_parent);
 	create_list('', 'divider', '', ul_parent);	
 	create_div('folder_' + cloud_name, '', '', '', ul_parent);
 }
